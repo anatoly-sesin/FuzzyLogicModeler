@@ -1,0 +1,44 @@
+Subject area and specific task
+Development of a controller controlling a water pump valve in order to save water in a soil irrigation system.
+Description of the input data
+Soil moisture data
+Variable name: ω = "soil moisture"
+Term-set of values:
+T_1= "saturated"
+T_2= "optimal"
+T_3= "insufficient" 
+Carrier: U=[0..50]
+Syntactic rule: soil moisture measured by a tensiometer on a scale from 0 to 50 centimeters.
+Semantic rule: defined by membership functions, for the value T_1-μ_1 (U), for T_2-μ_2 (U), for T_3-μ_3 (U) and for T_4-μ_4 (U). Moreover, the first of them corresponds to the fuzzy subset M_1, the second — M_2, the third — M_3, the fourth — M_4.
+Relative humidity data
+Variable name: ω = "relative humidity"
+Term-set of values:
+T_1= "low"
+T_2= "medium"
+T_3= "normal"
+T_4= "high"  
+Carrier: U=[0%..100%]
+Syntactic rule: relative humidity of the air as a percentage.
+Semantic rule: defined by membership functions, for the value T_1-μ_1 (U), for T_2-μ_2 (U), for T_3-μ_3 (U) and for T_4-μ_4 (U). Moreover, the first of them corresponds to the fuzzy subset M_1, the second — M_2, the third — M_3, the fourth — M_4.
+Air temperature data
+Variable name: ω = "air temperature"
+Term-set of values:
+T_1= "low"
+T_2= "medium"
+T_3= "normal"
+T_4= "high"  
+Carrier: U=[0..40]
+Syntactic rule: air temperature in degrees Celsius.
+Semantic rule: defined by membership functions, for the value T_1-μ_1 (U), for T_2-μ_2 (U), for T_3-μ_3 (U) and for T_4-μ_4 (U). Moreover, the first of them corresponds to the fuzzy subset M_1, the second — M_2, the third — M_3, the fourth — M_4.
+Description of the output data
+Water pump pressure level data
+Variable name: ω = "water pump pressure"
+Term-set of values:
+T_1= "very weak"
+T_2= "weak"
+T_3= "medium"
+T_4= "high"  
+T_5= "maximum"
+Carrier: U=[0%..100%]
+Syntactic rule: characterizes the pressure of a water pump controlled by changing the valve opening on a percentage relative scale.
+Semantic rule: defined by membership functions, for the value T_1-μ_1 (U), for T_2-μ_2 (U), for T_3-μ_3 (U), for T_4-μ_4 (U) and for T_5-μ_5 (U). Moreover, the first of them corresponds to the fuzzy subset M_1, the second — M_2, the third — M_3, the fourth — M_4, the fifth — M_5.
