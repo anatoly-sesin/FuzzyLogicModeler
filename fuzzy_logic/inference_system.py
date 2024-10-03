@@ -14,6 +14,7 @@ class InferenceSystem:
 
 
         self.consequents = None
+        #self.antecedent = None
 
     def build_system(self):
         antecedents = {}
@@ -21,7 +22,7 @@ class InferenceSystem:
         # print(st.session_state.linguistic_variables)
         for lv in self.linguistic_variables:
             if lv.name in [rule.consequent[0] for rule in self.rules]:
-                consequents[lv.name] = ctrl.Consequent(np.arange(lv.range_min, lv.range_max, 0.1), lv.name)
+                consequents[lv.name] = ctrl.Consequent(np.arange(lv.range_min, lv.range_max, 0.1), lv.name, self.defuzzification_method)
             else:
                 antecedents[lv.name] = ctrl.Antecedent(np.arange(lv.range_min, lv.range_max, 0.1), lv.name)
 
@@ -65,8 +66,9 @@ class InferenceSystem:
             ctrl_rules.append(ctrl.Rule(antecedent, consequent_term))
 
 
-            # Note: Rule weight is not applied due to limitations in the skfuzzy API
+        
         self.consequents = consequents
+        # self.antecedent = antecedents
         self.ctrl_system = ctrl.ControlSystem(ctrl_rules)
         self.ctrl_simulation = ctrl.ControlSystemSimulation(self.ctrl_system)
 
@@ -76,7 +78,10 @@ class InferenceSystem:
 
         for var_name, value in inputs.items():
             self.ctrl_simulation.input[var_name] = value
-
+        # st.write(self.consequents.keys())
+        # st.write(self.ctrl_simulation.output)
+        # self.consequents[].defuzzify_method = self.defuzzification_method
+        
         self.ctrl_simulation.compute()
 
         # Apply rule weights manually

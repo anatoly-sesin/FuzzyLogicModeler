@@ -15,11 +15,23 @@ def render_inference_system_viewer():
         st.warning("Please define linguistic variables and fuzzy rules before using the inference system.")
         return
 
+
+    # selected_defuzz = st.selectbox("Defuzzification Method for Mamdani Algorithm", ['centroid', 'bisector', 'mom', 'som', 'lom'])
     # Build inference system
     if st.button("Build Inference System", use_container_width=True):
+         
         st.session_state.inference_system = InferenceSystem(st.session_state.linguistic_variables, st.session_state.fuzzy_rules)
         st.session_state.inference_system.build_system()
         st.success("Inference system built successfully!")
+
+    selected_defuzz = st.selectbox("Defuzzification Method for Mamdani Algorithm", ['centroid', 'bisector', 'mom', 'som', 'lom'])
+    if st.session_state.inference_system is not None:
+        # st.session_state.inference_system.defuzzification_method = selected_defuzz
+        st.session_state.inference_system = InferenceSystem(st.session_state.linguistic_variables, st.session_state.fuzzy_rules, selected_defuzz)
+        st.session_state.inference_system.build_system()
+        # st.success("Inference system built successfully!")
+        
+
 
     if st.session_state.inference_system:
         st.subheader("Test Inference System")
@@ -42,7 +54,7 @@ def render_inference_system_viewer():
             else:
             # for var_name, value in results.items():
             #     st.write(f"{var_name}: {value:.2f}")
-                st.write(f'### Result')
+                st.write(f'### Result Mamdani')
                 st.write(f'#### *{output_name}:* {results.output[output_name]:.2f}')
 
 
@@ -70,7 +82,7 @@ def render_inference_system_viewer():
                 plt.savefig(buf, format='png')
                 buf.seek(0)
 
-                # Отображаем граф в Streamlit
+                # Show graph in Streamlit
                 st.image(buf, use_column_width=True)
 
 
