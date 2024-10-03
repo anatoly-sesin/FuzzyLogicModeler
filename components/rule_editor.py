@@ -27,7 +27,7 @@ def render_rule_editor():
         antecedents.append((ant_var, ant_term))
 
     # Add operation selection (AND/OR)
-    operation = st.radio("Select Operation:", ["AND", "OR"])
+    operation = st.radio("Select Operation:", ["AND", "OR"], horizontal=True)
 
     # Consequent
     output_variables = [lv for lv in st.session_state.linguistic_variables if lv.variable_type == "output"]
@@ -40,9 +40,9 @@ def render_rule_editor():
         consequent = (cons_var, cons_term)
 
         # Rule weight
-        rule_weight = st.slider("Rule Weight:", min_value=0.0, max_value=1.0, value=1.0, step=0.1)
-
-        if st.button("Add Rule"):
+        #rule_weight = st.slider("Rule Weight:", min_value=0.0, max_value=1.0, value=1.0, step=0.1)
+        rule_weight = 1.
+        if st.button("Add Rule", use_container_width=True):
             new_rule = FuzzyRule(antecedents, consequent, rule_weight, operation)
             st.session_state.fuzzy_rules.append(new_rule)
             st.success("Rule added successfully!")
@@ -52,13 +52,14 @@ def render_rule_editor():
     # Display existing rules
     st.subheader("Existing Rules")
     for i, rule in enumerate(st.session_state.fuzzy_rules):
-        st.write(f"{i+1}. {rule}")
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button(f"Edit Rule {i+1}", key=create_unique_key("edit_rule", i)):
+        cols = st.columns([3, 0.5, 0.5])
+        with cols[0]:
+            st.write(f"{i+1}. {rule}")
+        with cols[1]:
+            if st.button(f"✍️", key=create_unique_key("edit_rule", i), use_container_width=True):#\u270F
                 st.session_state[f"editing_rule_{i}"] = True
-        with col2:
-            if st.button(f"Remove Rule {i+1}", key=create_unique_key("remove_rule", i)):
+        with cols[2]:
+            if st.button(f"❌", key=create_unique_key("remove_rule", i), use_container_width=True):
                 st.session_state.fuzzy_rules.pop(i)
                 st.success(f"Rule {i+1} removed successfully!")
                 st.rerun()
@@ -80,7 +81,7 @@ def edit_rule(rule, rule_index):
         antecedents.append((ant_var, ant_term))
 
     # Edit operation
-    operation = st.radio("Select Operation:", ["AND", "OR"], index=0 if rule.operation == "AND" else 1, key=f"edit_operation_{rule_index}")
+    operation = st.radio("Select Operation:", ["AND", "OR"], index=0 if rule.operation == "AND" else 1, key=f"edit_operation_{rule_index}", horizontal=True)
 
     # Edit consequent
     col1, col2 = st.columns(2)
@@ -91,14 +92,15 @@ def edit_rule(rule, rule_index):
     consequent = (cons_var, cons_term)
 
     # Edit rule weight
-    rule_weight = st.slider("Rule Weight:", min_value=0.0, max_value=1.0, value=rule.weight, step=0.1, key=f"edit_weight_{rule_index}")
-
-    if st.button("Save Changes", key=f"save_rule_{rule_index}"):
-        st.session_state.fuzzy_rules[rule_index] = FuzzyRule(antecedents, consequent, rule_weight, operation)
-        st.success("Rule updated successfully!")
-        st.session_state[f"editing_rule_{rule_index}"] = False
-        st.rerun()
-
-    if st.button("Cancel", key=f"cancel_edit_{rule_index}"):
-        st.session_state[f"editing_rule_{rule_index}"] = False
-        st.rerun()
+    #rule_weight = st.slider("Rule Weight:", min_value=0.0, max_value=1.0, value=rule.weight, step=0.1, key=f"edit_weight_{rule_index}")
+    rule_weight = 1
+    with col1:
+        if st.button("Save Changes", key=f"save_rule_{rule_index}", use_container_width=True):
+            st.session_state.fuzzy_rules[rule_index] = FuzzyRule(antecedents, consequent, rule_weight, operation)
+            st.success("Rule updated successfully!")
+            st.session_state[f"editing_rule_{rule_index}"] = False
+            st.rerun()
+    with col2:
+        if st.button("Cancel", key=f"cancel_edit_{rule_index}", use_container_width=True):
+            st.session_state[f"editing_rule_{rule_index}"] = False
+            st.rerun()

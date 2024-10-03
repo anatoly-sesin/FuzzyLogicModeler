@@ -6,6 +6,7 @@ from utils.plotting import plot_rule_viewer
 import networkx as nx
 import matplotlib.pyplot as plt
 import io
+import skfuzzy as fuzz
 
 def render_inference_system_viewer():
     st.header("Inference System Viewer")
@@ -15,7 +16,7 @@ def render_inference_system_viewer():
         return
 
     # Build inference system
-    if st.button("Build Inference System"):
+    if st.button("Build Inference System", use_container_width=True):
         st.session_state.inference_system = InferenceSystem(st.session_state.linguistic_variables, st.session_state.fuzzy_rules)
         st.session_state.inference_system.build_system()
         st.success("Inference system built successfully!")
@@ -33,15 +34,16 @@ def render_inference_system_viewer():
                 output_name = lv.name
 
 
-        if st.button("Compute"):
+        if st.button("Compute Mamdani", use_container_width=True):
             results = st.session_state.inference_system.compute(inputs)
-            st.write("### Results")
+            # st.write("### Results")
             if  len(results.output) == 0:
-                st.write('Error: There are not enough rules in the rule base')
+                st.error('Error: There are not enough rules in the rule base')
             else:
             # for var_name, value in results.items():
             #     st.write(f"{var_name}: {value:.2f}")
-                st.write(f'{output_name}: {results.output[output_name]:.2f}')
+                st.write(f'### Result')
+                st.write(f'#### *{output_name}:* {results.output[output_name]:.2f}')
 
 
                 # Plot rule viewer
@@ -60,7 +62,10 @@ def render_inference_system_viewer():
                 fig = plt.figure(figsize=(10, 7))
                 ax = fig.add_subplot(1, 1, 1)
                 st.session_state.inference_system.consequents[output_name].view(sim=results)
-
+                #print(type(st.session_state.inference_system.consequents[output_name]))
+                # fig, ax = fuzz.control.visualization.ControlSystemVisualizer(st.session_state.inference_system.consequents[output_name]).graph()
+                # st.pyplot(plt.show())
+                # st.pyplot(fig)
                 buf = io.BytesIO()
                 plt.savefig(buf, format='png')
                 buf.seek(0)

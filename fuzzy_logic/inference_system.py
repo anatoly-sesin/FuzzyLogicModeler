@@ -1,6 +1,8 @@
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
+from simpful import *
+import streamlit as st
 
 class InferenceSystem:
     def __init__(self, linguistic_variables, rules, defuzzification_method='centroid'):
@@ -10,12 +12,13 @@ class InferenceSystem:
         self.ctrl_system = None
         self.ctrl_simulation = None
 
+
         self.consequents = None
 
     def build_system(self):
         antecedents = {}
         consequents = {}
-
+        # print(st.session_state.linguistic_variables)
         for lv in self.linguistic_variables:
             if lv.name in [rule.consequent[0] for rule in self.rules]:
                 consequents[lv.name] = ctrl.Consequent(np.arange(lv.range_min, lv.range_max, 0.1), lv.name)
@@ -25,12 +28,16 @@ class InferenceSystem:
             for term_name, (mf_type, mf_params) in lv.get_terms().items():
                 if mf_type == 'triangular':
                     mf_function = fuzz.trimf
+                    mf_function_sugeno = Triangular_MF
                 elif mf_type == 'trapezoidal':
                     mf_function = fuzz.trapmf
+                    mf_function_sugeno = Trapezoidal_MF
                 elif mf_type == 'gaussian':
                     mf_function = lambda x, params: fuzz.gaussmf(x, params[0], params[1])
+                    mf_function_sugeno = Gaussian_MF
                 elif mf_type == 'sigmoid':
                     mf_function = lambda x, params: fuzz.sigmf(x, params[0], params[1])
+                    mf_function_sugeno = Sigmoid_MF
                 else:
                     raise ValueError(f"Unsupported membership function type: {mf_type}")
 
@@ -56,6 +63,8 @@ class InferenceSystem:
                 raise ValueError(f"Unsupported operation: {rule.operation}")
             
             ctrl_rules.append(ctrl.Rule(antecedent, consequent_term))
+
+
             # Note: Rule weight is not applied due to limitations in the skfuzzy API
         self.consequents = consequents
         self.ctrl_system = ctrl.ControlSystem(ctrl_rules)

@@ -6,5 +6,5 @@ class FuzzyRule:
         self.operation = operation
 
     def __str__(self):
-        antecedents_str = f" {self.operation} ".join([f"{var} IS {term}" for var, term in self.antecedents])
-        return f"IF {antecedents_str} THEN {self.consequent[0]} IS {self.consequent[1]} (weight: {self.weight})"
+        antecedents_str = f" {self.operation} ".join([f"({var} IS {term})" for var, term in self.antecedents])
+        return f"IF {antecedents_str} THEN ({self.consequent[0]} IS {self.consequent[1]})"
