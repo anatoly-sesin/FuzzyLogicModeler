@@ -1,7 +1,14 @@
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
+import simpful
 
+
+print((simpful))
+
+
+
+'''
 # Создание входных переменных
 service = ctrl.Antecedent(np.arange(0, 11, 1), 'service')
 food = ctrl.Antecedent(np.arange(0, 11, 1), 'food')
@@ -36,3 +43,4 @@ tipping.compute()
 
 # Вывод результата
 print(f"Рассчитанные чаевые: {tipping.output['tip']} %")
+'''
