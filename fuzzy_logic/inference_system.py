@@ -28,16 +28,16 @@ class InferenceSystem:
             for term_name, (mf_type, mf_params) in lv.get_terms().items():
                 if mf_type == 'triangular':
                     mf_function = fuzz.trimf
-                    mf_function_sugeno = Triangular_MF
+                    # mf_function_sugeno = Triangular_MF
                 elif mf_type == 'trapezoidal':
                     mf_function = fuzz.trapmf
-                    mf_function_sugeno = Trapezoidal_MF
+                    # mf_function_sugeno = Trapezoidal_MF
                 elif mf_type == 'gaussian':
                     mf_function = lambda x, params: fuzz.gaussmf(x, params[0], params[1])
-                    mf_function_sugeno = Gaussian_MF
+                    # mf_function_sugeno = Gaussian_MF
                 elif mf_type == 'sigmoid':
                     mf_function = lambda x, params: fuzz.sigmf(x, params[0], params[1])
-                    mf_function_sugeno = Sigmoid_MF
+                    # mf_function_sugeno = Sigmoid_MF
                 else:
                     raise ValueError(f"Unsupported membership function type: {mf_type}")
 
