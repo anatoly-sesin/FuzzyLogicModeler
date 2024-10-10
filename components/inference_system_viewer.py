@@ -3,7 +3,7 @@ import numpy as np
 from fuzzy_logic.inference_system import InferenceSystem
 from utils.helpers import get_linguistic_variable_by_name
 from utils.plotting import plot_rule_viewer
-import networkx as nx
+# import networkx as nx
 import matplotlib.pyplot as plt
 import io
 import skfuzzy as fuzz
