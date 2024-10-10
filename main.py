@@ -50,6 +50,7 @@ def initialize_variables():
     
     if 'inference_system' not in st.session_state:
         st.session_state.inference_system = None
+        st.session_state.inference_system_for_sugeno = None
 
 def main():
     st.title("Fuzzy Logic Toolbox")
@@ -91,7 +92,7 @@ def main():
             st.sidebar.write(st.session_state.uploaded_file.name)
             import_fuzzy_system(json.load(uploaded_file))
             st.rerun()
-            st.sidebar.success('Success import')
+            #st.sidebar.success('Success import')
             
         else:
             st.sidebar.error('No file')
