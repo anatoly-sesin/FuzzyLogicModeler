@@ -109,6 +109,112 @@ def render_inference_system_viewer():
         else:
             st.info("Please build the inference system first.")         
 
+    import streamlit as st
+from fuzzy_logic.inference_system import InferenceSystem
+import matplotlib.pyplot as plt
+import io
+import simpful as smfuzz
+
+
+def render_inference_system_viewer():
+    st.header("Inference System Viewer")
+    tabs = st.tabs(["Mamdani Inference", "Sugeno Inference"])
+
+    with tabs[0]:
+        if not st.session_state.linguistic_variables or not st.session_state.fuzzy_rules:
+            st.warning("Please define linguistic variables and fuzzy rules before using the inference system.")
+            return
+
+
+        # selected_defuzz = st.selectbox("Defuzzification Method for Mamdani Algorithm", ['centroid', 'bisector', 'mom', 'som', 'lom'])
+        # Build inference system
+        if st.button("Build Inference System", use_container_width=True):
+            
+            st.session_state.inference_system = InferenceSystem(st.session_state.linguistic_variables, st.session_state.fuzzy_rules)
+            st.session_state.inference_system.build_system()
+            st.success("Inference system built successfully!")
+
+        selected_defuzz = st.selectbox("Defuzzification Method for Mamdani Algorithm", ['centroid', 'bisector', 'mom', 'som', 'lom'])
+        if st.session_state.inference_system is not None:
+            # st.session_state.inference_system.defuzzification_method = selected_defuzz
+            st.session_state.inference_system = InferenceSystem(st.session_state.linguistic_variables, st.session_state.fuzzy_rules, selected_defuzz)
+            st.session_state.inference_system.build_system()
+            # st.success("Inference system built successfully!")
+            
+
+
+        if st.session_state.inference_system:
+            st.subheader("Test Inference System")
+
+            # Input values
+            inputs = {}
+            output_name = ''
+            for lv in st.session_state.linguistic_variables:
+                if lv.name not in [rule.consequent[0] for rule in st.session_state.fuzzy_rules]:
+                    inputs[lv.name] = st.slider(f"{lv.name}:", min_value=float(lv.range_min), max_value=float(lv.range_max), value=float(lv.range_min), step=0.1)
+                else:
+                    output_name = lv.name
+
+
+            if st.button("Compute Mamdani", use_container_width=True):
+                results = st.session_state.inference_system.compute(inputs)
+                # st.write("### Results")
+                if  len(results.output) == 0:
+                    st.error('Error: There are not enough rules in the rule base')
+                else:
+                # for var_name, value in results.items():
+                #     st.write(f"{var_name}: {value:.2f}")
+                    st.write(f'### Result Mamdani')
+                    st.write(f'#### *{output_name}:* {results.output[output_name]:.2f}')
+
+
+                    # Plot rule viewer
+                    st.write("### Rule Viewer")
+                    #print(st.session_state.inference_system.ctrl_simulation.ctrl.graph)
+                    # print(st.session_state.linguistic_variables)
+                    # for lv in st.session_state.linguistic_variables:
+                    #     st.session_state.inference_system
+                    #     if lv.name == output_name:
+                    #         lv.view(sim=results)
+                    #fig, ax = plt.subplots()
+                    
+                    #st.pyplot()
+                    #print((st.session_state.inference_system.consequents[output_name].view(sim=results)))
+
+                    fig = plt.figure(figsize=(10, 7))
+                    ax = fig.add_subplot(1, 1, 1)
+                    st.session_state.inference_system.consequents[output_name].view(sim=results)
+                    #print(type(st.session_state.inference_system.consequents[output_name]))
+                    # fig, ax = fuzz.control.visualization.ControlSystemVisualizer(st.session_state.inference_system.consequents[output_name]).graph()
+                    # st.pyplot(plt.show())
+                    # st.pyplot(fig)
+                    buf = io.BytesIO()
+                    plt.savefig(buf, format='png')
+                    buf.seek(0)
+
+                    # Show graph in Streamlit
+                    st.image(buf, use_column_width=True)
+
+
+                
+                
+                #st.graphviz_chart(nx.nx_pydot.to_pydot().to_string())
+                # rule_viewer_plot = plot_rule_viewer(st.session_state.inference_system, inputs)
+                # if rule_viewer_plot:
+                #     st.pyplot(rule_viewer_plot)
+                # G = st.session_state.inference_system.ctrl_simulation.ctrl.graph
+                # # Создаем фигуру для matplotlib
+                # fig, ax = plt.subplots()
+
+                # # Визуализируем граф с помощью networkx и matplotlib
+                # pos = nx.spring_layout(G)  # Определяем расположение узлов
+                # nx.draw(G, pos, with_labels=True, ax=ax, node_color='skyblue', font_size=8, font_weight='light', node_size=700, arrowsize=20)
+
+                # # Отображаем граф в Streamlit
+                # st.pyplot(fig)
+        else:
+            st.info("Please build the inference system first.")         
+
     with tabs[1]:
         if not st.session_state.linguistic_variables or not st.session_state.fuzzy_rules:
             st.warning("Please define linguistic variables and fuzzy rules before using the inference system.")
@@ -134,12 +240,12 @@ def render_inference_system_viewer():
                     for name, params in elem.terms.items():
                         # st.write(mfuncs.get(params[0])(*params[1]))
                         func = mfuncs.get(params[0])(*params[1])
-                        term.append(smfuzz.FuzzySet(function=func, term=name))
-                    st.session_state.inference_system_for_sugeno.add_linguistic_variable(elem.name, smfuzz.LinguisticVariable(term, universe_of_discourse=[elem.range_min, elem.range_max]))
-                    inputs_names.append(elem.name)
+                        term.append(smfuzz.FuzzySet(function=func, term='_'.join(name.split())))
+                    st.session_state.inference_system_for_sugeno.add_linguistic_variable('_'.join(elem.name.split()), smfuzz.LinguisticVariable(term, universe_of_discourse=[elem.range_min, elem.range_max]))
+                    inputs_names.append('_'.join(elem.name.split()))
                     #st.write(term)
                 else:
-                    output_terms = {key: None for key in elem.terms}
+                    output_terms = {'_'.join(key.split()): None for key in elem.terms}
             
             cols = st.columns(2)
             for term in output_terms:
@@ -153,25 +259,26 @@ def render_inference_system_viewer():
                     value = st.text_input("", placeholder=f"Enter", key=f"enter_linear_sugeno_{term}")
                     st.markdown("_")
                     output_terms[term] = (option, value)
-
-            # st.session_state.sugeno_params = 
+            
             try:
+                
                 if all(value[-1] is not None for value in output_terms.values()):
                     for term, value in output_terms.items():
                         if value[0] == "crisp" and value[1]:
                             st.session_state.inference_system_for_sugeno.set_crisp_output_value(term, float(value[1]))
                         else:
                             st.session_state.inference_system_for_sugeno.set_output_function(term, value[1])
-                    st.session_state.inference_system_for_sugeno.add_rules([str(rule) for rule in st.session_state.fuzzy_rules])
+                    st.session_state.inference_system_for_sugeno.add_rules([rule.str_to_sugeno() for rule in st.session_state.fuzzy_rules])
 
+                    st.session_state.inference_system_for_sugeno.get_rules()
 
                     inputs = {}
                     output_name = ''
                     for lv in st.session_state.linguistic_variables:
                         if lv.name not in [rule.consequent[0] for rule in st.session_state.fuzzy_rules]:
-                            inputs[lv.name] = st.slider(f"{lv.name}:", min_value=float(lv.range_min), max_value=float(lv.range_max), value=float(lv.range_min), step=0.1, key=f'sugeno_slider_input_{lv.name}')
+                            inputs['_'.join(lv.name.split())] = st.slider(f"{lv.name}:", min_value=float(lv.range_min), max_value=float(lv.range_max), value=float(lv.range_min), step=0.1, key=f'sugeno_slider_input_{lv.name}')
                         else:
-                            output_name = lv.name
+                            output_name = '_'.join(lv.name.split())
 
                     if st.button("Compute Sugeno", use_container_width=True):
                         for name in inputs_names:
