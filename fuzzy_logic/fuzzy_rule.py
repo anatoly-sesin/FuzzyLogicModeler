@@ -5,11 +5,13 @@ class FuzzyRule:
         self.weight = weight
         self.operation = operation
 
+    def str_to_sugeno(self):
+        antecedents_str = f" {self.operation} ".join([f"({'_'.join(var.split())} IS {'_'.join(term.split())})" for var, term in self.antecedents])
+        return f"IF {antecedents_str} THEN ({'_'.join(self.consequent[0].split())} IS {'_'.join(self.consequent[1].split())})"
+
     def __str__(self, sugeno=False):
-        if not sugeno:
-            antecedents_str = f" {self.operation} ".join([f"({var} IS {term})" for var, term in self.antecedents])
-            return f"IF {antecedents_str} THEN ({self.consequent[0]} IS {self.consequent[1]})"
-        else:
-            antecedents_str = f" {self.operation} ".join([f"({'_'.join(var.split())} IS {'_'.join(term.split())})" for var, term in self.antecedents])
-            return f"IF {antecedents_str} THEN ({'_'.join(self.consequent[0].split())} IS {'_'.join(self.consequent[1].split())})"
+        antecedents_str = f" {self.operation} ".join([f"({var} IS {term})" for var, term in self.antecedents])
+        return f"IF {antecedents_str} THEN ({self.consequent[0]} IS {self.consequent[1]})"
         
+        
+
