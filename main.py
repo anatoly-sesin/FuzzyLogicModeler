@@ -24,6 +24,7 @@ def initialize_variables():
 
 def main():
     st.title("Fuzzy Logic Toolbox")
+    st.set_option('server.headless', True)
 
     initialize_variables()
     st.session_state.uploaded_file = None
