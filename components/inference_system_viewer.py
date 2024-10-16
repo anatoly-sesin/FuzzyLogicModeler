@@ -186,8 +186,8 @@ def render_inference_system_viewer():
             except SyntaxError:
                 st.warning("Define the terms of the output variable by constants and/or a linear combination of inputs")
             except Exception as e:
-                st.error("Define the terms of the output variable by numeric constants and/or a correct linear combination of inputs")
-                # st.error(e)
+                # st.error("Define the terms of the output variable by numeric constants and/or a correct linear combination of inputs")
+                st.error(e)
         else:
             st.info("Please build the inference system first.") 
                 
